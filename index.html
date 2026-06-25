@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ardiansyah | Fullstack & AI Engineer</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .skill-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid #f1f5f9; }
+        .skill-card:hover { transform: scale(1.1) translateY(-10px); box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.15); border-color: #6366f1; }
+        .admin-only { display: none !important; }
+        body.admin-mode .admin-only { display: block !important; }
+        .pin-dot { width: 15px; height: 15px; border: 2px solid #6366f1; border-radius: 50%; transition: all 0.2s; }
+        .pin-dot.active { background: #6366f1; transform: scale(1.2); }
+        .pin-btn { width: 60px; height: 60px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: none; }
+        .pin-btn:active { background: #e2e8f0; }
+        .map-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 20px; }
+        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .map-focus-btn { position: absolute; top: 10px; right: 10px; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center text-white">
+        <div class="text-center">
+            <i class="fas fa-circle-notch fa-spin text-4xl mb-2 text-indigo-400"></i>
+            <p id="loadingText">Proses...</p>
+        </div>
+    </div>
+
+    <!-- Navigasi -->
+    <nav class="fixed w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold tracking-tighter text-indigo-600">ARDI.<span class="text-slate-800">DEV</span></div>
+            <div class="hidden md:flex space-x-8 font-medium text-slate-600">
+                <a href="#about" class="hover:text-indigo-600 transition">Tentang</a>
+                <a href="#skills" class="hover:text-indigo-600 transition">Keahlian</a>
+                <a href="#projects" class="hover:text-indigo-600 transition">Proyek</a>
+                <a href="#location" class="hover:text-indigo-600 transition">Lokasi</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="lockBtn" onclick="openPinModal()" class="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition">
+                    <i class="fas fa-lock"></i>
+                </button>
+                <button onclick="openWaModal()" class="bg-indigo-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-indigo-700 shadow-md transition">Kontak Saya</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section id="about" class="pt-32 pb-20 px-6">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right">
+                <h2 class="text-indigo-600 font-bold mb-2 tracking-widest uppercase text-sm">Fullstack & AI Engineer</h2>
+                <h1 class="text-5xl md:text-6xl font-extrabold mb-6">Ardiansyah.</h1>
+                <p id="bioText" class="text-lg text-slate-600 mb-8 leading-relaxed">
+                    Membangun sistem berkualitas tinggi, skalabel, dan teruji. Berdomisili di <b>Repok Repaok, Desa Selebung Langko, Kec. Janapria</b>.
+                </p>
+                <div class="mb-8 admin-only bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
+                    <label class="block text-xs font-bold mb-2 text-indigo-600 uppercase">Update Foto Profil:</label>
+                    <input type="file" id="profileInput" accept="image/*" onchange="previewAndUploadProfile(this)" class="text-sm">
+                </div>
+                <div class="flex gap-4">
+                    <a href="#projects" class="bg-slate-900 text-white px-8 py-3 rounded-xl hover:bg-slate-800 transition shadow-lg">Lihat Proyek</a>
+                    <button onclick="openWaModal()" class="bg-white border border-slate-200 text-slate-700 px-8 py-3 rounded-xl hover:bg-slate-50 transition">WhatsApp</button>
+                </div>
+            </div>
+            <div class="relative flex justify-center" data-aos="zoom-in">
+                <div class="w-72 h-72 md:w-80 md:h-80 bg-indigo-600 rounded-3xl rotate-6 absolute"></div>
+                <img id="profileImg" src="https://ui-avatars.com/api/?name=Ardiansyah&background=4f46e5&color=fff&size=400" class="w-72 h-72 md:w-80 md:h-80 rounded-3xl relative object-cover shadow-2xl border-4 border-white">
+            </div>
+        </div>
+    </section>
+
+    <!-- Stack Section -->
+    <section id="skills" class="py-20 px-6 bg-slate-100/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h3 class="text-3xl font-bold mb-2">Bahasa & Teknologi</h3>
+                <p class="text-slate-500">Stack yang saya kuasai untuk pengembangan aplikasi.</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                <!-- Stack -->
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="zoom-in" data-aos-delay="50"><span class="text-3xl font-black text-blue-600">C++</span><h4 class="mt-2 font-bold text-xs uppercase">C++</h4></div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="zoom-in" data-aos-delay="100"><i class="fab fa-python text-4xl text-blue-500 mb-2"></i><h4 class="font-bold text-xs uppercase">Python</h4></div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="zoom-in" data-aos-delay="150"><i class="fab fa-html5 text-4xl text-orange-500 mb-2"></i><h4 class="font-bold text-xs uppercase">HTML</h4></div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="zoom-in" data-aos-delay="200"><i class="fab fa-css3-alt text-4xl text-blue-400 mb-2"></i><h4 class="font-bold text-xs uppercase">CSS</h4></div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="zoom-in" data-aos-delay="250"><i class="fab fa-js text-4xl text-yellow-400 mb-2"></i><h4 class="font-bold text-xs uppercase">Javascript</h4></div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="zoom-in" data-aos-delay="300"><i class="fab fa-php text-4xl text-indigo-500 mb-2"></i><h4 class="font-bold text-xs uppercase">PHP</h4></div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="zoom-in" data-aos-delay="350"><i class="fab fa-laravel text-4xl text-red-600 mb-2"></i><h4 class="font-bold text-xs uppercase">Laravel</h4></div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="zoom-in" data-aos-delay="400"><i class="fab fa-node-js text-4xl text-green-600 mb-2"></i><h4 class="font-bold text-xs uppercase">Node.js</h4></div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="zoom-in" data-aos-delay="450"><i class="fab fa-vuejs text-4xl text-emerald-500 mb-2"></i><h4 class="font-bold text-xs uppercase">Vue</h4></div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="zoom-in" data-aos-delay="500"><i class="fas fa-database text-4xl text-indigo-600 mb-2"></i><h4 class="font-bold text-xs uppercase">MySQL</h4></div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="zoom-in" data-aos-delay="550"><i class="fas fa-server text-4xl text-slate-700 mb-2"></i><h4 class="font-bold text-xs uppercase">XAMPP</h4></div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="zoom-in" data-aos-delay="600"><i class="fab fa-github text-4xl text-black mb-2"></i><h4 class="font-bold text-xs uppercase">Github</h4></div>
+            </div>
+
+            <!-- AI Agents -->
+            <div class="text-center mt-20 mb-12" data-aos="fade-up">
+                <h3 class="text-3xl font-bold mb-2">Fitur Agen AI</h3>
+                <p class="text-slate-500">Implementasi kecerdasan buatan dalam workflow saya.</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="flip-up" data-aos-delay="100">
+                    <i class="fas fa-comment-dots text-4xl text-emerald-500 mb-4"></i><h4 class="font-bold">ChatGPT</h4>
+                </div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="flip-up" data-aos-delay="200">
+                    <i class="fas fa-shuttle-space text-4xl text-blue-500 mb-4"></i><h4 class="font-bold">Gemini</h4>
+                </div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="flip-up" data-aos-delay="300">
+                    <i class="fas fa-bolt text-4xl text-indigo-600 mb-4"></i><h4 class="font-bold">Google AI Studio</h4>
+                </div>
+                <div class="skill-card bg-white p-6 rounded-2xl text-center" data-aos="flip-up" data-aos-delay="400">
+                    <i class="fas fa-cube text-4xl text-slate-800 mb-4"></i><h4 class="font-bold">Blackbox AI</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="py-20 px-6 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+                <div data-aos="fade-right">
+                    <h3 class="text-4xl font-bold mb-2">Proyek Pilihan</h3>
+                    <p class="text-slate-500 italic">"Koleksi aplikasi yang telah saya kembangkan."</p>
+                </div>
+                <button onclick="openProjectModal()" class="admin-only bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg transition">
+                    <i class="fas fa-plus mr-2"></i> Tambah Proyek
+                </button>
+            </div>
+            <div id="projectContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Data Proyek muncul di sini -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Location -->
+    <section id="location" class="py-20 px-6 bg-slate-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h3 class="text-3xl font-bold mb-4">Lokasi Saya</h3>
+                <p class="text-slate-500">Repok Repaok, Desa Selebung Langko, Kec. Janapria, Lombok Tengah.</p>
+            </div>
+            <div class="map-container shadow-2xl border-4 border-white" data-aos="zoom-in">
+                <button onclick="focusMap()" class="map-focus-btn md:hidden"><i class="fas fa-expand"></i> Fokus Peta</button>
+                <iframe id="googleMap" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3944.3312065842857!2d116.3653194!3d-8.8385412!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dcd99292c2a07ef%3A0x2d039206d203f6f1!2sSelebung%20Langko%2C%20Janapria%2C%20Lombok%20Tengah!5e0!3m2!1sid!2sid!4v1710000000000" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-10 text-center text-slate-400 border-t">
+        <p>© 2026 Ardiansyah. Made with <i class="fas fa-heart text-red-500"></i> in Selebung.</p>
+    </footer>
+
+    <!-- Modal Form WA -->
+    <div id="waModal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-6 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl">
+            <h3 class="text-2xl font-bold mb-6 flex items-center gap-2"><i class="fab fa-whatsapp text-green-500"></i> Kontak via WhatsApp</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold mb-1">Nama Anda</label>
+                    <input type="text" id="waName" placeholder="Masukkan nama anda..." class="w-full p-3 border rounded-xl outline-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">Pesan Anda</label>
+                    <textarea id="waMsg" placeholder="Tulis pesan anda..." class="w-full p-3 border rounded-xl h-32 outline-indigo-500"></textarea>
+                </div>
+                <button onclick="sendWa()" class="w-full bg-green-500 text-white py-4 rounded-xl font-bold hover:bg-green-600 transition flex items-center justify-center gap-2">
+                    Kirim ke WhatsApp <i class="fas fa-paper-plane"></i>
+                </button>
+                <button onclick="closeWaModal()" class="w-full text-slate-400 text-sm font-medium">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Proyek -->
+    <div id="projectModal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-6 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-lg p-8 shadow-2xl">
+            <h3 class="text-2xl font-bold mb-6">Tambah Proyek Baru</h3>
+            <div class="space-y-4">
+                <input type="text" id="pTitle" placeholder="Nama Proyek" class="w-full p-3 border rounded-xl outline-indigo-500">
+                <input type="text" id="pTag" placeholder="Teknologi (Contoh: Laravel, MySQL)" class="w-full p-3 border rounded-xl outline-indigo-500">
+                <input type="text" id="pLink" placeholder="Unggah Link Domain (https://...)" class="w-full p-3 border rounded-xl outline-indigo-500">
+                
+                <div class="flex gap-3 pt-4">
+                    <button onclick="saveProject()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700">Simpan Proyek</button>
+                    <button onclick="closeProjectModal()" class="px-6 bg-slate-100 py-3 rounded-xl font-bold">Batal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIN Modal -->
+    <div id="pinModal" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center backdrop-blur-md">
+        <div class="bg-white rounded-3xl w-[320px] p-8 text-center shadow-2xl">
+            <h3 class="font-bold text-xl mb-6">Admin Access</h3>
+            <div class="flex justify-center gap-4 mb-8">
+                <div class="pin-dot" id="dot-1"></div><div class="pin-dot" id="dot-2"></div>
+                <div class="pin-dot" id="dot-3"></div><div class="pin-dot" id="dot-4"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <button onclick="pressPin(1)" class="pin-btn">1</button>
+                <button onclick="pressPin(2)" class="pin-btn">2</button>
+                <button onclick="pressPin(3)" class="pin-btn">3</button>
+                <button onclick="pressPin(4)" class="pin-btn">4</button>
+                <button onclick="pressPin(5)" class="pin-btn">5</button>
+                <button onclick="pressPin(6)" class="pin-btn">6</button>
+                <button onclick="pressPin(7)" class="pin-btn">7</button>
+                <button onclick="pressPin(8)" class="pin-btn">8</button>
+                <button onclick="pressPin(9)" class="pin-btn">9</button>
+                <button onclick="closePinModal()" class="pin-btn text-red-500 text-xs">EXIT</button>
+                <button onclick="pressPin(0)" class="pin-btn">0</button>
+                <button onclick="clearPin()" class="pin-btn"><i class="fas fa-backspace"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // GANTI URL INI setelah deploy AppScript
+        const API_URL = "https://script.google.com/macros/s/AKfycbzRJTEZdafyfAxWzQE-6-TVZ72MMZjLoQnPuagG5rePZIthsseaPKPUaknfquHDGT-bAw/exec"; 
+        const SECRET_HASH = "MTMwNA=="; // PIN: 1304 (Base64)
+        
+        let projectsData = [
+            { title: "Aplikasi Pelayanan Perpustakaan", tag: "Laravel & MySQL", link: "https://github.com/ardiansyah" },
+            { title: "Aplikasi 7 Kasih Spenkop Ceria", tag: "PHP & CSS", link: "#" },
+            { title: "Aplikasi E-Izin", tag: "Vue.js & Node.js", link: "#" },
+            { title: "Landing Page Eskrim", tag: "HTML & Tailwind", link: "#" }
+        ];
+        
+        let inputPin = "";
+        AOS.init({ duration: 800, once: true });
+
+        async function init() {
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                if (data.projects && data.projects.length > 0) projectsData = data.projects;
+                if (data.profileImg) document.getElementById('profileImg').src = data.profileImg;
+            } catch (e) { console.log("Offline mode atau AppScript belum siap"); }
+            renderProjects();
+        }
+
+        function renderProjects() {
+            const container = document.getElementById('projectContainer');
+            container.innerHTML = '';
+            const isAdmin = document.body.classList.contains('admin-mode');
+
+            projectsData.forEach((p, index) => {
+                container.innerHTML += `
+                    <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition hover:shadow-xl group" data-aos="fade-up">
+                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 mb-2 block">${p.tag}</span>
+                        <h4 class="text-2xl font-bold mb-6">${p.title}</h4>
+                        <div class="flex flex-col gap-3">
+                            <a href="${p.link}" target="_blank" class="w-full text-center py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-indigo-600 transition">Lihat Demo / Link</a>
+                        </div>
+                        <div class="mt-4 flex justify-end gap-2 ${isAdmin ? '' : 'hidden'}">
+                            <button onclick="deleteProject(${index})" class="text-red-500 p-2 hover:bg-red-50 rounded-lg transition"><i class="fas fa-trash"></i> Hapus Permanen</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function sendWa() {
+            const name = document.getElementById('waName').value;
+            const msg = document.getElementById('waMsg').value;
+            if(!name || !msg) return alert("Mohon isi nama dan pesan anda!");
+            const phone = "6281959868364";
+            const text = `Halo Ardiansyah, Nama saya *${name}*.\n\n${msg}`;
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+            closeWaModal();
+        }
+
+        async function saveProject() {
+            const title = document.getElementById('pTitle').value;
+            const tag = document.getElementById('pTag').value;
+            const link = document.getElementById('pLink').value;
+
+            if(!title || !link) return alert("Isi data proyek!");
+
+            showLoading(true, "Menyimpan proyek...");
+            const newProj = { title, tag, link };
+            projectsData.unshift(newProj);
+
+            try {
+                await fetch(API_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    body: JSON.stringify({ action: 'syncProjects', projects: projectsData }) 
+                });
+            } catch (e) {}
+            
+            renderProjects();
+            closeProjectModal();
+            showLoading(false);
+        }
+
+        async function deleteProject(index) {
+            if(confirm("Hapus proyek ini secara permanen?")) {
+                showLoading(true, "Menghapus...");
+                projectsData.splice(index, 1);
+                try {
+                    await fetch(API_URL, { 
+                        method: 'POST', 
+                        mode: 'no-cors', 
+                        body: JSON.stringify({ action: 'syncProjects', projects: projectsData }) 
+                    });
+                } catch (e) {}
+                renderProjects();
+                showLoading(false);
+            }
+        }
+
+        async function previewAndUploadProfile(input) {
+            if (input.files && input.files[0]) {
+                showLoading(true, "Mengunggah foto...");
+                const file = input.files[0];
+                const base64 = await toBase64(file);
+                
+                try {
+                    await fetch(API_URL , { 
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify({ action: 'updateProfile', file: base64, mimeType: file.type })
+                    });
+                    document.getElementById('profileImg').src = `data:${file.type};base64,${base64}`;
+                } catch (e) {}
+                showLoading(false);
+            }
+        }
+
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = error => reject(error);
+        });
+
+        function showLoading(s, t) {
+            document.getElementById('loadingText').innerText = t;
+            document.getElementById('loadingOverlay').classList.toggle('hidden', !s);
+        }
+
+        // Auth & UI Logic
+        function openPinModal() {
+            if(document.body.classList.contains('admin-mode')) {
+                document.body.classList.remove('admin-mode');
+                document.getElementById('lockBtn').innerHTML = '<i class="fas fa-lock"></i>';
+                renderProjects();
+                return;
+            }
+            inputPin = ""; updatePinDots();
+            document.getElementById('pinModal').classList.remove('hidden');
+        }
+        function pressPin(n) {
+            if(inputPin.length < 4) {
+                inputPin += n; updatePinDots();
+                if(inputPin.length === 4) {
+                    if(btoa(inputPin) === SECRET_HASH) {
+                        document.body.classList.add('admin-mode');
+                        document.getElementById('lockBtn').innerHTML = '<i class="fas fa-lock-open text-indigo-600"></i>';
+                        closePinModal(); renderProjects();
+                    } else { alert("PIN Salah!"); inputPin = ""; updatePinDots(); }
+                }
+            }
+        }
+        function updatePinDots() { for(let i=1; i<=4; i++) document.getElementById(`dot-${i}`).classList.toggle('active', i <= inputPin.length); }
+        function clearPin() { inputPin = inputPin.slice(0, -1); updatePinDots(); }
+        function closePinModal() { document.getElementById('pinModal').classList.add('hidden'); }
+        function openWaModal() { document.getElementById('waModal').classList.remove('hidden'); }
+        function closeWaModal() { document.getElementById('waModal').classList.add('hidden'); }
+        function openProjectModal() { document.getElementById('projectModal').classList.remove('hidden'); }
+        function closeProjectModal() { document.getElementById('projectModal').classList.add('hidden'); }
+        function focusMap() { document.getElementById('googleMap').focus(); }
+
+        // Mendukung Klik Keyboard pada tombol PIN
+        window.addEventListener('keydown', (e) => {
+            if(!document.getElementById('pinModal').classList.contains('hidden')) {
+                if(e.key >= 0 && e.key <= 9) pressPin(e.key);
+                if(e.key === 'Backspace') clearPin();
+                if(e.key === 'Escape') closePinModal();
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>
